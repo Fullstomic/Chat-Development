@@ -340,7 +340,6 @@ $(function () {
   // Sends a chat message
   const on_send_message = () => {
     let message = $inputMessage.val();
-    let temp_username = user_data.user_name;
     console.log(connected);
     console.log("接続中");
     if (message) {
@@ -348,8 +347,8 @@ $(function () {
       $inputMessage.val("");
       let message_includes_ng_word_flag = on_ng_word_search(message);
       if (!message_includes_ng_word_flag) {
-        console.log("データ入力済み");
-        on_create_message_data({ temp_username, message });
+        let username = user_data.user_name;
+        on_create_message_data({ username, message });
         // tell server to execute 'new message' and send along one parameter
         socket.emit("new message", message);
       } else {

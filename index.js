@@ -82,7 +82,7 @@ io.on("connection", (socket) => {
 
     let belong_room_subscript = on_room_search(roomname);
     addedUser = true;
-    if (room_data[belong_room_subscript].movie_url != null) {
+    if (room_data_list[belong_room_subscript] != null) {
       socket.emit("add movie", {
         movieurl: room_data[belong_room_subscript].movie_url,
       });
