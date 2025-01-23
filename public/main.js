@@ -340,8 +340,6 @@ $(function () {
   // Sends a chat message
   const on_send_message = () => {
     let message = $inputMessage.val();
-    console.log(connected);
-    console.log("接続中");
     if (message) {
       message = cleanInput(message);
       $inputMessage.val("");
@@ -361,7 +359,6 @@ $(function () {
 
   // Adds the visual chat message to the message list
   const on_create_message_data = (data, options = {}) => {
-    console.log(data.username);
     // Don't fade the message in if there is an 'X was typing'
     const $typingMessages = getTypingMessages(data);
     if ($typingMessages.length !== 0) {
