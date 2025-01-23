@@ -68,8 +68,6 @@ io.on("connection", (socket) => {
     room_data_list[current_group_count] = room_data;
     addedUser = true;
 
-    socket.emit("login");
-
     // echo globally (all clients) that a person has connected
 
     socket.join(socket.roomname);
@@ -85,11 +83,12 @@ io.on("connection", (socket) => {
 
     let belong_room_subscript = on_room_search(roomname);
     addedUser = true;
+    if (room_data[belong_room_subscript].movie_url != null) {
+      socket.emit("add movie", {
+        movieurl: room_data[belong_room_subscript].movie_url,
+      });
+    }
 
-    socket.emit("login");
-    socket.emit("add movie", {
-      movieurl: addurl[belong_room_subscript],
-    });
     socket.join(socket.roomname);
   });
 
@@ -97,12 +96,6 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     if (addedUser) {
       --numUsers;
-
-      // echo globally that this client has left
-      socket.broadcast.emit("user left", {
-        username: socket.username,
-        numUsers: numUsers,
-      });
     }
   });
 });

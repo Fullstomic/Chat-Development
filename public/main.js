@@ -316,19 +316,17 @@ $(function () {
   const on_set_user_data = () => {
     user_data.user_name = cleanInput($usernameInput.val().trim());
     user_data.room_name = cleanInput($inputroomname.val().trim());
-    console.log(user_data.user_name);
+
     if (user_data.user_name && user_data.room_name) {
       let name_includes_ng_word_flag = on_ng_word_search(user_data.user_name);
-      if (!name_includes_ng_word_flag) {
+      if (name_includes_ng_word_flag == false) {
+        let temp_name = user_data.user_name;
+        let temp_roomname = user_data.room_name;
+        socket.emit("participant user", temp_name, temp_roomname);
         $login_page.fadeOut();
         $chat_page.show();
         $login_page.off("click");
         $currentInput = $inputMessage.focus();
-        socket.emit(
-          "participant user",
-          user_data.user_name,
-          user_data.room_name
-        );
       } else {
         alert(
           "ユーザー名にNGワードが含まれています。再度入力しなおしてください。"
@@ -341,27 +339,30 @@ $(function () {
 
   // Sends a chat message
   const on_send_message = () => {
-    let message = cleanInput($inputMessage.val().trime());
-    if (connected) {
-      if (message) {
-        let message_includes_ng_word_flag = on_ng_word_search(message);
-        if (!message_includes_ng_word_flag) {
-          on_create_message_data({ username, message });
-          // tell server to execute 'new message' and send along one parameter
-          socket.emit("new message", message);
-        } else {
-          alert(
-            "メッセージにNGワードが含まれています。入力しなおしてください。"
-          );
-        }
+    let message = $inputMessage.val();
+    let temp_username = user_data.user_name;
+    console.log(connected);
+    console.log("接続中");
+    if (message) {
+      message = cleanInput(message);
+      $inputMessage.val("");
+      let message_includes_ng_word_flag = on_ng_word_search(message);
+      if (!message_includes_ng_word_flag) {
+        console.log("データ入力済み");
+        on_create_message_data({ temp_username, message });
+        // tell server to execute 'new message' and send along one parameter
+        socket.emit("new message", message);
       } else {
-        alert("メッセージが入力されていません。再度入力してください。");
+        alert("メッセージにNGワードが含まれています。入力しなおしてください。");
       }
+    } else {
+      alert("メッセージが入力されていません。再度入力してください。");
     }
   };
 
   // Adds the visual chat message to the message list
   const on_create_message_data = (data, options = {}) => {
+    console.log(data.username);
     // Don't fade the message in if there is an 'X was typing'
     const $typingMessages = getTypingMessages(data);
     if ($typingMessages.length !== 0) {
@@ -419,10 +420,6 @@ $(function () {
   //#endregion
 
   //#region Socket.ioのイベント
-  //ログイン時のフラグ変更
-  socket.on("login", () => {
-    connected = true;
-  });
 
   //新規メッセージ取得後表示
   socket.on("new message", (data) => {
