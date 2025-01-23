@@ -1,444 +1,624 @@
-
 $(function () {
-    
-    //NGワードの設定
-    const NGWORDS = [
-        "事故",
-        "死亡",
-        "骨折",
-        "重傷",
-        "殺害",
-        "傷害",
-        "暴力",
-        "被害者",
-        "放送事故",
-        "ポルノ",
-        "アダルト",
-        "セックス",
-        "バイブレーター",
-        "マスターベーション",
-        "オナニー",
-        "スケベ",
-        "羞恥",
-        "セクロス",
-        "エッチ",
-        "SEX",
-        "風俗",
-        "童貞",
-        "ペニス",
-        "巨乳",
-        "ロリ",
-        "触手",
-        "羞恥",
-        "ノーブラ",
-        "大麻",
-        "麻薬",
-        "基地外",
-        "糞",
-        "死ね",
-        "殺す",
-        "shit",
-        "piss",
-        "fuck",
-        "cunt",
-        "cocksucker",
-        "motherfucker",
-        "tits",
-        "R18",
-        "R-18",
-        "例のアレ",
-        "真夏の夜の淫夢",
-        "アヘ顔",
-        "亀頭",
-        "へんたい",
-        "ヘンタイ",
-        "変態",
-        "パンチラ",
-        "♂",
-        "アッー",
-        "アナル",
-        "アヘ顔",
-        "イマラ",
-        "淫",
-        "運営のお気に入り",
-        "エッチ",
-        "MKT",
-        "おっぱい",
-        "オッパイ",
-        "オナシャス",
-        "ガチムチ",
-        "姦",
-        "元祖羞恥心",
-        "亀頭",
-        "KMR",
-        "糞",
-        "クルルァ",
-        "グロ",
-        "ゲイ",
-        "ケツ",
-        "殺",
-        "シコ",
-        "自分を売る",
-        "18禁",
-        "春画",
-        "処女",
-        "ショタ",
-        "パイパン",
-        "フェラ",
-        "ふたなり",
-        "ペニス",
-        "へんたい",
-        "ヘンタイ",
-        "変態",
-        "ホモ",
-        "マラ",
-        "まんこ",
-        "マンコ",
-        "野獣",
-        "幼女",
-        "ょぅ",
-        "レイプ",
-        "レズ",
-        "ろり",
-        "ロリ",
-        "セックス",
-        "せっくす",
-        "安心のコメ率",
-        "レスリングシリーズ",
-        "来いよアグネス",
-        "紳士",
-        "運営仕事しろ",
-        "例のプール",
-        "https",
-        "http",
-        "*",
-        "█",
-        "シスコン",
-        "@",
-        "Heil Hitler",
-        "Adorf Hitler",
-        "ハイル・ヒトラー",
-        "アドルフ・ヒトラー",
-        "ヒムラー",
-        "Himmler",
-        "ラインハルト・ハイドリヒ",
-        "Rheinheard Heydrich",
-        "パウル・フォン・ヒンデンブルク",
-        "Paul Von Hindenburg",
-        "共産",
-        "アカ",
-        "ナチズム",
-        "ネオナチ",
-        "極右",
-        "極左",
-        "far right",
-        "far left",
-        "extreme left",
-        "extreme right",
-        "Communism",
-        "レーニン",
-        "天安門",
-        "ポア",
-        "Discord",
-        "LINE",
-        "Facebook",
-        "nigger",
-        "ニガー",
-        "Instagram",
-        "send this to",
-        "skype",
-        "WTF",
-        "wtf",
-        "W+F",
-        "卍",
-        "┳",
-        "全裸",
-        "1919",
-        "4545",
-        "斬首",
-        "絞首",
-        "タイヤネックレス",
-        "現金",
-        "殺人",
-        "写真",
-        "宗教",
-        "性交",
-        "ー",
-        "～",
-        "｜",
-        "￥",
-        "｛",
-        "｝",
-        "美乳",
-        "娼婦",
-        "”",
-        "＊",
-        "script",
-        "exec",
-        "<",
-        ">",
-        "＜",
-        "＞",
-        ".com",
-        ".co",
-        ".go",
-        ".gov",
-        ".lg",
-        ".ed",
-        "人民",
-        "Nazism",
-        "nazism",
-        "Nationalsozialismus",
-        "neo-Nazism",
-        "Neonazismus",
-        "neo-nazism",
-        "neonazismus",
-        "ファシズム",
-        "fascismo",
-        "fascism",
-        "Faschismus",
-        "Fascismo",
-        "Fascism",
-        "Faschismus",
-        "中核派",
-        "アルカイダ",
-        "アルカーイダ",
-        "Al-Qaeda",
-        "al-qaeda",
-        "القاعدة",
-        "イスラム原理主義",
-        "Islamic fundamentalism",
-        "islamic fundamentalism",
-        "ソープ",
-        "ドヤ",
-        "屠殺",
-        "Negro",
-        "ネグロ",
-        "人非人",
-        "精神障碍者",
-        "精神障害者",
-        "ガイジ",
-        "KKK",
-        "Ku Klux Klan",
-        "クー・クラックス・クラン",
-        "オウム真理教",
-        "Prick",
-        "Retarded",
-        "Screw you",
-        "bitch",
-        "ビッチ",
-        "Whore",
-        "Erection",
-        "Cunt",
-        "Bullshit",
-        "Bitch",
-        "Asshole",
-        "社会主義",
-        "Socialism",
-        "socialism",
-        "ソ連",
-        "ソビエト連邦",
-        "ソビエト社会主義共和国連邦",
-        "Union of Soviet Socialist Republics",
-        "原爆",
-        "原子爆弾",
-        "核弾頭",
-        "核",
-        "Atomic Bomb",
-        "atomic bomb",
-        "Nuclear",
-        "Nuke",
-        "nuclear",
-        "nuke",
-        "全体主義",
-        "Totalitarianism",
-        "Totalitarismo",
-        "チュチェ思想",
-        "主体思想",
-        "╰⋃╯",
-    ];
+  const FADE_TIME = 150; // ms
+  const TYPING_TIMER_LENGTH = 400; // ms
+  document.querySelector("iframe").addEventListener("load", function () {});
+  const COLORS = [
+    "#e21400",
+    "#91580f",
+    "#f8a700",
+    "#f78b00",
+    "#58dc00",
+    "#287b00",
+    "#a8f07a",
+    "#4ae8c4",
+    "#3b88eb",
+    "#3824aa",
+    "#a700ff",
+    "#d300e7",
+  ];
+  //NGワード
+  const ngwords = [
+    "事故",
+    "死亡",
+    "骨折",
+    "重傷",
+    "殺害",
+    "傷害",
+    "暴力",
+    "被害者",
+    "放送事故",
+    "ポルノ",
+    "アダルト",
+    "セックス",
+    "バイブレーター",
+    "マスターベーション",
+    "オナニー",
+    "スケベ",
+    "羞恥",
+    "セクロス",
+    "エッチ",
+    "SEX",
+    "風俗",
+    "童貞",
+    "ペニス",
+    "巨乳",
+    "ロリ",
+    "触手",
+    "羞恥",
+    "ノーブラ",
+    "大麻",
+    "麻薬",
+    "基地外",
+    "糞",
+    "死ね",
+    "殺す",
+    "shit",
+    "piss",
+    "fuck",
+    "cunt",
+    "cocksucker",
+    "motherfucker",
+    "tits",
+    "R18",
+    "R-18",
+    "例のアレ",
+    "真夏の夜の淫夢",
+    "アヘ顔",
+    "亀頭",
+    "へんたい",
+    "ヘンタイ",
+    "変態",
+    "パンチラ",
+    "♂",
+    "アッー",
+    "アナル",
+    "アヘ顔",
+    "イマラ",
+    "淫",
+    "運営のお気に入り",
+    "エッチ",
+    "MKT",
+    "おっぱい",
+    "オッパイ",
+    "オナシャス",
+    "ガチムチ",
+    "姦",
+    "元祖羞恥心",
+    "亀頭",
+    "KMR",
+    "糞",
+    "クルルァ",
+    "グロ",
+    "ゲイ",
+    "ケツ",
+    "殺",
+    "シコ",
+    "自分を売る",
+    "18禁",
+    "春画",
+    "処女",
+    "ショタ",
+    "パイパン",
+    "フェラ",
+    "ふたなり",
+    "ペニス",
+    "へんたい",
+    "ヘンタイ",
+    "変態",
+    "ホモ",
+    "マラ",
+    "まんこ",
+    "マンコ",
+    "野獣",
+    "幼女",
+    "ょぅ",
+    "レイプ",
+    "レズ",
+    "ろり",
+    "ロリ",
+    "セックス",
+    "せっくす",
+    "安心のコメ率",
+    "レスリングシリーズ",
+    "来いよアグネス",
+    "紳士",
+    "運営仕事しろ",
+    "例のプール",
+    "https",
+    "http",
+    "*",
+    "█",
+    "シスコン",
+    "@",
+    "Heil Hitler",
+    "Adorf Hitler",
+    "ハイル・ヒトラー",
+    "アドルフ・ヒトラー",
+    "ヒムラー",
+    "Himmler",
+    "ラインハルト・ハイドリヒ",
+    "Rheinheard Heydrich",
+    "パウル・フォン・ヒンデンブルク",
+    "Paul Von Hindenburg",
+    "共産",
+    "アカ",
+    "ナチズム",
+    "ネオナチ",
+    "極右",
+    "極左",
+    "far right",
+    "far left",
+    "extreme left",
+    "extreme right",
+    "Communism",
+    "レーニン",
+    "天安門",
+    "ポア",
+    "Discord",
+    "LINE",
+    "Facebook",
+    "nigger",
+    "ニガー",
+    "Instagram",
+    "send this to",
+    "skype",
+    "WTF",
+    "wtf",
+    "W+F",
+    "卍",
+    "┳",
+    "全裸",
+    "1919",
+    "4545",
+    "斬首",
+    "絞首",
+    "タイヤネックレス",
+    "現金",
+    "殺人",
+    "写真",
+    "宗教",
+    "性交",
+    "ー",
+    "～",
+    "｜",
+    "￥",
+    "｛",
+    "｝",
+    "美乳",
+    "娼婦",
+    "”",
+    "＊",
+    "script",
+    "exec",
+    "<",
+    ">",
+    "＜",
+    "＞",
+    ".com",
+    ".co",
+    ".go",
+    ".gov",
+    ".lg",
+    ".ed",
+    "人民",
+    "Nazism",
+    "nazism",
+    "Nationalsozialismus",
+    "neo-Nazism",
+    "Neonazismus",
+    "neo-nazism",
+    "neonazismus",
+    "ファシズム",
+    "fascismo",
+    "fascism",
+    "Faschismus",
+    "Fascismo",
+    "Fascism",
+    "Faschismus",
+    "中核派",
+    "アルカイダ",
+    "アルカーイダ",
+    "Al-Qaeda",
+    "al-qaeda",
+    "القاعدة",
+    "イスラム原理主義",
+    "Islamic fundamentalism",
+    "islamic fundamentalism",
+    "ソープ",
+    "ドヤ",
+    "屠殺",
+    "Negro",
+    "ネグロ",
+    "人非人",
+    "精神障碍者",
+    "精神障害者",
+    "ガイジ",
+    "KKK",
+    "Ku Klux Klan",
+    "クー・クラックス・クラン",
+    "オウム真理教",
+    "Prick",
+    "Retarded",
+    "Screw you",
+    "bitch",
+    "ビッチ",
+    "Whore",
+    "Erection",
+    "Cunt",
+    "Bullshit",
+    "Bitch",
+    "Asshole",
+    "社会主義",
+    "Socialism",
+    "socialism",
+    "ソ連",
+    "ソビエト連邦",
+    "ソビエト社会主義共和国連邦",
+    "Union of Soviet Socialist Republics",
+    "原爆",
+    "原子爆弾",
+    "核弾頭",
+    "核",
+    "Atomic Bomb",
+    "atomic bomb",
+    "Nuclear",
+    "Nuke",
+    "nuclear",
+    "nuke",
+    "全体主義",
+    "Totalitarianism",
+    "Totalitarismo",
+    "チュチェ思想",
+    "主体思想",
+    "╰⋃╯",
+  ];
+  console.log(ngwords.length);
+  // Initialize variables
+  const $window = $(window);
+  const $usernameInput = $(".usernameInput"); // Input for username
+  const $messages = $(".messages"); // Messages area
+  const $inputMessage = $(".inputMessage"); // Input message input box
+  const $inputroomname = $(".roomname");
+  const $loginPage = $(".login.page"); // The login page
+  const $chatPage = $(".chat.page"); // The chatroom page
+  const $loginbtn = $(".loginbtn");
+  const $tab1 = $("#tab_1");
+  const $tab2 = $("#tab_2");
+  const socket = io();
 
-    //URLパラメーターの取得・データ設定
-    let current_page_url = new URL(window.location.href);
-    $room_name_input.val(current_page_url.searchParams.get("roomid"))
+  // Prompt for setting a username
+  let username;
+  let roomname;
+  let roompassword;
+  let tempusername;
+  let temproomname;
+  let temproompassword;
+  let connected = false;
+  let typing = false;
+  let lastTypingTime;
+  let $currentInput;
+  let errorflg;
+  let current;
+  const addParticipantsMessage = (data) => {
+    // let message = "";
+    // if (data.numUsers === 1) {
+    //   message += `現在1人接続中`;
+    // } else {
+    //   message += `現在、 ${data.numUsers} 人接続中`;
+    // }
+    // log(message);
+  };
+  // Sets the client's username
+  const setUsername = () => {
+    username = cleanInput($usernameInput.val().trim());
+    roomname = cleanInput($inputroomname.val().trim());
+    tempusername = username;
+    temproomname = roomname;
+    let nameNgWordsFlag;
+    for (var i = 0; i < ngwords.length; i++) {
+      if (username.includes(ngwords[i])) {
+        nameNgWordsFlag = true;
+        break;
+      }
+    }
+    // If the username is valid
+    socket.emit("find room", roomname);
+    console.log(current);
+    if (username && roomname && !nameNgWordsFlag && !errorflg) {
+      $loginPage.fadeOut();
+      $chatPage.show();
+      $loginPage.off("click");
+      $currentInput = $inputMessage.focus();
 
-    //#region エレメントの取得
-        //入力エレメントの取得
-        const $window = $(window);
-        const $user_name_input = $(".usernameInput");
-        const $room_name_input = $(".roomname");
-        const $message_list = $(".messages");
-        const $message_input = $(".inputMessage");
+      // Tell the server your username
+      socket.emit("add user", username, roomname);
 
-        //ページエレメントの取得
-        const $login_page = $(".login.page");
-        const $chat_page = $(".chat.page");
-        const $id_chat_page = $("#chat");
-        const $search_page = $("#search");
+      socket.on("add movie", (data) => {
+        console.log(data);
+        $(".streaming").html(data.movieurl);
+      });
+    } else if (nameNgWordsFlag) {
+      alert("NGワードが含まれています。入力しなおしてください。");
+      nameNgWordsFlag = false;
+    } else {
+      alert("ユーザー名かルームIDが正しくありません。");
+    }
+  };
+  $("#loadmovie").on("click", function () {
+    socket.emit("add movie", tempusername, temproomname);
+  });
+  $loginbtn.on("click", function () {
+    username = cleanInput($usernameInput.val().trim());
+    roomname = cleanInput($inputroomname.val().trim());
+    // If the username is valid
+    let nameNgWordsButtonFlag;
+    for (var i = 0; i < ngwords.length; i++) {
+      if (username.includes(ngwords[i])) {
+        nameNgWordsButtonFlag = true;
+        break;
+      }
+    }
+    socket.emit("find room", roomname);
 
-        //ボタンエレメントの取得
-        const $login_button = $(".loginbtn");
-        const $submit_button = $("#submit");
+    console.log(current);
+    if (username && roomname && !nameNgWordsButtonFlag && !errorflg) {
+      $loginPage.fadeOut();
+      $chatPage.show();
+      $loginPage.off("click");
+      $currentInput = $inputMessage.focus();
 
-        //タブエレメントの取得
-        const $tab1 = $("#tab_1");
-        const $tab2 = $("#tab_2");
+      // Tell the server your username
 
-        //そのほかエレメントの取得
-        const $movie_display = $(".streaming");
-        const $theme_change_switch = $("#themechangeswitch");
-    //#endregion
-    //Socket.ioの使用
-    const socket = io();
+      socket.emit("add user", username, roomname);
+    } else if (nameNgWordsButtonFlag) {
+      alert("NGワードが含まれています。入力しなおしてください。");
+      nameNgWordsFlag = false;
+    } else {
+      alert("ユーザー名かルームIDが正しくありません。");
+    }
+  });
+  socket.on("add movie", (data) => {
+    console.log(data);
+    $(".streaming").html(data.movieurl);
+  });
+  // Sends a chat message
+  $("#submit").on("click", function () {
+    let message = $inputMessage.val();
+    // Prevent markup from being injected into the message
+    message = cleanInput(message);
+    let messageNgWordsButtonFlag;
+    for (var i = 0; i < ngwords.length; i++) {
+      if (message.includes(ngwords[i])) {
+        messageNgWordsButtonFlag = true;
+        break;
+      }
+    }
+    // if there is a non-empty message and a socket connection
+    if (message && connected && !messageNgWordsButtonFlag) {
+      $inputMessage.val("");
+      addChatMessage({ username, message });
+      // tell server to execute 'new message' and send along one parameter
+      socket.emit("new message", message);
+    } else if (messageNgWordsButtonFlag) {
+      alert("NGワードが含まれています。入力しなおしてください。");
+    } else {
+      alert("入力されていません。再度入力してください。");
+    }
+  });
+  const sendMessage = () => {
+    let message = $inputMessage.val();
+    // Prevent markup from being injected into the message
+    message = cleanInput(message);
+    let messageNgWordsFlag;
+    for (var i = 0; i < ngwords.length; i++) {
+      if (message.includes(ngwords[i])) {
+        messageNgWordsFlag = true;
+        break;
+      }
+    }
+    // if there is a non-empty message and a socket connection
+    if (message && connected && !messageNgWordsFlag) {
+      $inputMessage.val("");
+      addChatMessage({ username, message });
+      // tell server to execute 'new message' and send along one parameter
+      socket.emit("new message", message);
+    } else if (messageNgWordsFlag) {
+      alert("NGワードが含まれています。入力しなおしてください。");
+      messageNgWordsFlag = false;
+    } else {
+      alert("入力されていません。再度入力してください。");
+    }
+  };
+  // Log a message
+  const log = (message, options) => {
+    const $el = $("<li>")
+      .addClass("chat__comment-list--other_message")
+      .text(message);
+    addMessageElement($el, options);
+  };
 
-    //#region 処理用変数
-        //ユーザーデータ保持用
-        let processing_user_name;
-        let processing_room_name;
+  // Adds the visual chat message to the message list
+  const addChatMessage = (data, options = {}) => {
+    // Don't fade the message in if there is an 'X was typing'
+    const $typingMessages = getTypingMessages(data);
+    if ($typingMessages.length !== 0) {
+      options.fade = false;
+      $typingMessages.remove();
+    }
 
-        //ルームデータ保存用
-        let room_array;
+    const $usernameDiv = $('<span class="username"/>')
+      .text(data.username)
+      .css("color", getUsernameColor(data.username));
+    const $messageBodyDiv = $('<span class="messageBody">').text(data.message);
 
-        //接続可否
-        let connected;
+    const typingClass = data.typing ? "typing" : "";
+    const $messageDiv = $('<li class="chat__comment-list--my_message"/>')
+      .data("username", data.username)
+      .addClass(typingClass)
+      .append($usernameDiv, $messageBodyDiv);
 
-        //フラグ
-        let darkflag;
-    //#endregion
-    
-    //保存用データ
-    let user_data = {
-        username: processing_user_name,
-        roomname: processing_room_name,
-    };
+    addMessageElement($messageDiv, options);
+  };
 
-    //#region 共通部分
-        //入力データの挿入・削除
-        const clean_input = (input) => {
-            return $("<div/>").text(input).html();
-        };
+  // Adds the visual chat typing message
+  const addChatTyping = (data) => {
+    data.typing = true;
+    data.message = "is typing";
+    addChatMessage(data);
+  };
 
-        //NGワードの検出
-        const on_detection_ng_words = (detection_words) => {
-            for(var i = 0; i < NGWORDS.length; i++) {
-                if(detection_words.includes(NGWORDS[i])) {
-                    return true;
-                }
-            }
-            return false;
-        };
+  // Removes the visual chat typing message
+  const removeChatTyping = (data) => {
+    getTypingMessages(data).fadeOut(function () {
+      $(this).remove();
+    });
+  };
 
-        //ユーザーデータの設定
-        const on_set_user_data = () => {
-            processing_user_name = clean_input($user_name_input.val().trim());
-            processing_room_name = clean_input($room_name_input.val().trim());
-            if(!processing_user_name && !processing_room_name) {             
-                let user_name_ng_words_flag = on_detection_ng_words(user_data.username);
-                if(!user_name_ng_words_flag) {
-                    $login_page.fadeOut();
-                    $chat_page.show();
-                    socket.emit("participant user", user_data.username, user_data.roomname);
-                }else{
-                    processing_room_name = null;
-                    processing_user_name = null;
-                    alert("NGワードが含まれています。再度入力しなおしてください。");
-                }
-            }else{
-                alert("ユーザー名かルームが入力されていません。再度入力してください。");
-            }            
-        };
+  // Adds a message element to the messages and scrolls to the bottom
+  // el - The element to add as a message
+  // options.fade - If the element should fade-in (default = true)
+  // options.prepend - If the element should prepend
+  //   all other messages (default = false)
+  const addMessageElement = (el, options) => {
+    const $el = $(el);
+    // Setup default options
+    if (!options) {
+      options = {};
+    }
+    if (typeof options.fade === "undefined") {
+      options.fade = true;
+    }
+    if (typeof options.prepend === "undefined") {
+      options.prepend = false;
+    }
 
-        //チャット送信
-        const on_send_message = () => {
-            let message = clean_input($message_input.val().trim());
-            if(!message) {
-                let message_ng_flag = on_detection_ng_words(message);
-                if(!message_ng_flag) {
-                    if(message.includes(SEARCH_UUID)) {
-                        let search_data = monster_search.conversion_data(message);
-                    }else{
-                        socket.emit("new message", message);
-                    }
-                    
-                }else{
-                    alert("NGワードが含まれています。入力しなおしてください。");
-                }
-            }else{
-                alert("入力されていません。再度入力してください。");
-            }
+    // Apply options
+    if (options.fade) {
+      $el.hide().fadeIn(FADE_TIME);
+    }
+    if (options.prepend) {
+      $messages.prepend($el);
+    } else {
+      $messages.append($el);
+    }
+
+    $messages[0].scrollTop = $messages[0].scrollHeight;
+  };
+
+  // Prevents input from having injected markup
+  const cleanInput = (input) => {
+    return $("<div/>").text(input).html();
+  };
+
+  // Updates the typing event
+  const updateTyping = () => {
+    if (connected) {
+      if (!typing) {
+        typing = true;
+      }
+      lastTypingTime = new Date().getTime();
+
+      setTimeout(() => {
+        const typingTimer = new Date().getTime();
+        const timeDiff = typingTimer - lastTypingTime;
+        if (timeDiff >= TYPING_TIMER_LENGTH && typing) {
+          typing = false;
         }
+      }, TYPING_TIMER_LENGTH);
+    }
+  };
 
-        
-        //エレメント生成
-        const on_create_chat_element = (data, options = {}) => {
-            const $user_name_content = $('<span class="username" />').text(data.username);
-            const $message_body_content = $('<span class="messageBody">').text(data.message);
-            const $message_element = $('<li class="chat__comment-list--my_message"/>').data("username", data.username).append($user_name_content, $message_body_content);
-            on_add_chat_list($message_element);
-        };
+  // Gets the 'X is typing' messages of a user
+  const getTypingMessages = (data) => {
+    return $(".typing.message").filter(function (i) {
+      return $(this).data("username") === data.username;
+    });
+  };
 
-        //エレメントリスト追加
-        const on_add_chat_list = (elment, options) => {
-            const $element = $(elment);
-            if(!options) options = {};
-            if(typeof options.fade === "undefined") options.fade = true;
-            if(typeof options.prepend === "undefined") options.prepend = false;
-            if(options.fade) $element.hide().fadeIn();
-            if(options.prepend) {
-                $message_list.prepend($element);
-            }else{
-                $message_list.append($element);
-            }
-            $message_list[0].scrollTop = $message_list[0].scrollHeight;
-        };
+  // Gets the color of a username through our hash function
+  const getUsernameColor = (username) => {
+    // Compute hash code
+    let hash = 7;
+    for (let i = 0; i < username.length; i++) {
+      hash = username.charCodeAt(i) + (hash << 5) - hash;
+    }
+    // Calculate color
+  };
 
-        //キーボードのイベント
-        $window.keydown((event) => {
-            if (event.which === 13) {
-                if(processing_user_name) {
-                    on_send_message();
-                } else {
-                    on_set_user_data();
-                }
-            }
-        });
+  // Keyboard events
 
-        //
-    //#endregion
-    //#region Socket.ioのイベント
-        //ログイン
-        socket.on("login", (data) => {
-            connected = true;
-        });
+  $window.keydown((event) => {
+    // Auto-focus the current input when a key is typed
 
-        //映像表示
-        socket.on("send movie", (data) => {
-            $movie_display.html(data.movieurl);
-        });
+    // When the client hits ENTER on their keyboard
+    if (event.which === 13) {
+      if (username) {
+        sendMessage();
+        typing = false;
+      } else {
+        setUsername();
+      }
+    }
+  });
 
-        //他ユーザーからのメッセージを出力
-        socket.on("new message", (data) => {
-            on_create_chat_element(data);
-        });
-    //#endregion
-    //#region エレメント関係のイベント
-        //スイッチによるテーマモードの変更
-        $theme_change_switch.click(function() {
-            if(!darkflag) {
-                $id_chat_page.addClass("darktheme");
-                darkflag = true;
-            }else{
-                $id_chat_page.removeClass("darktheme");
-                darkflag = false;
-            }
-        });
+  $inputMessage.on("input", () => {
+    updateTyping();
+  });
 
-        //タブによる表示変更
-        $tab1.click(function () {
-            $search_page.removeClass("search_visible");
-        });
-        $tab2.click(function () {
-            $search_page.addClass("search_visible");
-        });
-    //#endregion
+  // Click events
+
+  // Focus input when clicking on the message input's border
+  $inputMessage.click(() => {
+    $inputMessage.focus();
+  });
+
+  // Socket events
+
+  // Whenever the server emits 'login', log the login message
+  socket.on("login", (data) => {
+    connected = true;
+
+    addParticipantsMessage(data);
+  });
+
+  // Whenever the server emits 'new message', update the chat body
+  socket.on("new message", (data) => {
+    addChatMessage(data);
+  });
+
+  // Whenever the server emits 'user joined', log it in the chat body
+  socket.on("user joined", (data) => {
+    addParticipantsMessage(data);
+  });
+  socket.on("add movie", (data) => {
+    console.log(data);
+    $(".streaming").html(data.movieurl);
+  });
+  // Whenever the server emits 'user left', log it in the chat body
+  socket.on("user left", (data) => {
+    addParticipantsMessage(data);
+    removeChatTyping(data);
+  });
+  socket.on("login error", (data) => {
+    errorflg = data.errorflag;
+    current = data.current;
+  });
+  let darkflag = false;
+  $("#themechangeswitch").click(function () {
+    if (!darkflag) {
+      $("#chat").addClass("darktheme");
+      darkflag = true;
+    } else {
+      $("#chat").removeClass("darktheme");
+      darkflag = false;
+    }
+  });
+  $tab1.click(function () {
+    $("#search").removeClass("search_visible");
+  });
+  $tab2.click(function () {
+    $("#search").addClass("search_visible");
+  });
+  let current_page_url = new URL(window.location.href);
+  $inputroomname.val(current_page_url.searchParams.get("roomid"));
 });
