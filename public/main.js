@@ -1,6 +1,5 @@
 $(function () {
   const FADE_TIME = 150; // ms
-  const TYPING_TIMER_LENGTH = 400; // ms
 
   //NGワード
   const ngwords = [
@@ -268,16 +267,20 @@ $(function () {
   const $inputMessage = $(".inputMessage");
 
   //チャットリストの取得
-  const $messages = $(".messages");
+  const $message_list = $(".messages");
 
+  //映像表示部の取得
+  const $streaming_element = $(".streaming");
   //ページの取得
-  const $loginPage = $(".login.page");
-  const $chatPage = $(".chat.page");
+  const $login_page = $(".login.page");
+  const $chat_page = $(".chat.page");
 
   //ボタンの取得
-  const $loginbtn = $(".loginbtn");
+  const $login_button = $(".loginbtn");
   const $submit_button = $("#submit");
 
+  //スイッチの取得
+  const $theme_change_switch = $("#themechangeswitch");
   //タブの取得
   const $tab1 = $("#tab_1");
   const $tab2 = $("#tab_2");
@@ -287,152 +290,78 @@ $(function () {
 
   //#region 処理用変数
   //ユーザーデータ保持用
-  let username;
-  let roomname;
-
-  //ユーザーデータ一時保存用
-  let tempusername;
-  let temproomname;
 
   //各種フラグ
   let connected = false;
-  let typing = false;
-  let errorflg;
+  let darkflag = false;
+  //ユーザーデータ
+  let user_data = {
+    user_name: "",
+    room_name: "",
+  };
   //#endregion
 
-  let lastTypingTime;
-  let current;
-  // Sets the client's username
-  const setUsername = () => {
-    username = cleanInput($usernameInput.val().trim());
-    roomname = cleanInput($inputroomname.val().trim());
-    tempusername = username;
-    temproomname = roomname;
-    let nameNgWordsFlag;
+  //#region 共通部分
+  //NGワード含有チェック
+  const on_ng_word_search = (search_source_word) => {
     for (var i = 0; i < ngwords.length; i++) {
-      if (username.includes(ngwords[i])) {
-        nameNgWordsFlag = true;
-        break;
+      if (search_source_word.includes(ngwords[i])) {
+        return true;
       }
     }
-    // If the username is valid
-    socket.emit("find room", roomname);
-    console.log(current);
-    if (username && roomname && !nameNgWordsFlag && !errorflg) {
-      $loginPage.fadeOut();
-      $chatPage.show();
-      $loginPage.off("click");
-      $currentInput = $inputMessage.focus();
+    return false;
+  };
 
-      // Tell the server your username
-      socket.emit("add user", username, roomname);
-
-      socket.on("add movie", (data) => {
-        console.log(data);
-        $(".streaming").html(data.movieurl);
-      });
-    } else if (nameNgWordsFlag) {
-      alert("NGワードが含まれています。入力しなおしてください。");
-      nameNgWordsFlag = false;
+  //ユーザーデータ設定
+  const on_set_user_data = () => {
+    user_data.user_name = cleanInput($usernameInput.val().trim());
+    user_data.room_name = cleanInput($inputroomname.val().trim());
+    console.log(user_data.user_name);
+    if (user_data.user_name && user_data.room_name) {
+      let name_includes_ng_word_flag = on_ng_word_search(user_data.user_name);
+      if (!name_includes_ng_word_flag) {
+        $login_page.fadeOut();
+        $chat_page.show();
+        $login_page.off("click");
+        $currentInput = $inputMessage.focus();
+        socket.emit(
+          "participant user",
+          user_data.user_name,
+          user_data.room_name
+        );
+      } else {
+        alert(
+          "ユーザー名にNGワードが含まれています。再度入力しなおしてください。"
+        );
+      }
     } else {
-      alert("ユーザー名かルームIDが正しくありません。");
+      alert("ユーザー名かルーム名が入力されていません。再度入力してください。");
     }
   };
-  $("#loadmovie").on("click", function () {
-    socket.emit("add movie", tempusername, temproomname);
-  });
-  $loginbtn.on("click", function () {
-    username = cleanInput($usernameInput.val().trim());
-    roomname = cleanInput($inputroomname.val().trim());
-    // If the username is valid
-    let nameNgWordsButtonFlag;
-    for (var i = 0; i < ngwords.length; i++) {
-      if (username.includes(ngwords[i])) {
-        nameNgWordsButtonFlag = true;
-        break;
-      }
-    }
-    socket.emit("find room", roomname);
 
-    console.log(current);
-    if (username && roomname && !nameNgWordsButtonFlag && !errorflg) {
-      $loginPage.fadeOut();
-      $chatPage.show();
-      $loginPage.off("click");
-      $currentInput = $inputMessage.focus();
-
-      // Tell the server your username
-
-      socket.emit("add user", username, roomname);
-    } else if (nameNgWordsButtonFlag) {
-      alert("NGワードが含まれています。入力しなおしてください。");
-      nameNgWordsFlag = false;
-    } else {
-      alert("ユーザー名かルームIDが正しくありません。");
-    }
-  });
-  socket.on("add movie", (data) => {
-    console.log(data);
-    $(".streaming").html(data.movieurl);
-  });
   // Sends a chat message
-  $submit_button.on("click", function () {
-    let message = $inputMessage.val();
-    // Prevent markup from being injected into the message
-    message = cleanInput(message);
-    let messageNgWordsButtonFlag;
-    for (var i = 0; i < ngwords.length; i++) {
-      if (message.includes(ngwords[i])) {
-        messageNgWordsButtonFlag = true;
-        break;
+  const on_send_message = () => {
+    let message = cleanInput($inputMessage.val().trime());
+    if (connected) {
+      if (message) {
+        let message_includes_ng_word_flag = on_ng_word_search(message);
+        if (!message_includes_ng_word_flag) {
+          on_create_message_data({ username, message });
+          // tell server to execute 'new message' and send along one parameter
+          socket.emit("new message", message);
+        } else {
+          alert(
+            "メッセージにNGワードが含まれています。入力しなおしてください。"
+          );
+        }
+      } else {
+        alert("メッセージが入力されていません。再度入力してください。");
       }
     }
-    // if there is a non-empty message and a socket connection
-    if (message && connected && !messageNgWordsButtonFlag) {
-      $inputMessage.val("");
-      addChatMessage({ username, message });
-      // tell server to execute 'new message' and send along one parameter
-      socket.emit("new message", message);
-    } else if (messageNgWordsButtonFlag) {
-      alert("NGワードが含まれています。入力しなおしてください。");
-    } else {
-      alert("入力されていません。再度入力してください。");
-    }
-  });
-  const sendMessage = () => {
-    let message = $inputMessage.val();
-    // Prevent markup from being injected into the message
-    message = cleanInput(message);
-    let messageNgWordsFlag;
-    for (var i = 0; i < ngwords.length; i++) {
-      if (message.includes(ngwords[i])) {
-        messageNgWordsFlag = true;
-        break;
-      }
-    }
-    // if there is a non-empty message and a socket connection
-    if (message && connected && !messageNgWordsFlag) {
-      $inputMessage.val("");
-      addChatMessage({ username, message });
-      // tell server to execute 'new message' and send along one parameter
-      socket.emit("new message", message);
-    } else if (messageNgWordsFlag) {
-      alert("NGワードが含まれています。入力しなおしてください。");
-      messageNgWordsFlag = false;
-    } else {
-      alert("入力されていません。再度入力してください。");
-    }
-  };
-  // Log a message
-  const log = (message, options) => {
-    const $el = $("<li>")
-      .addClass("chat__comment-list--other_message")
-      .text(message);
-    addMessageElement($el, options);
   };
 
   // Adds the visual chat message to the message list
-  const addChatMessage = (data, options = {}) => {
+  const on_create_message_data = (data, options = {}) => {
     // Don't fade the message in if there is an 'X was typing'
     const $typingMessages = getTypingMessages(data);
     if ($typingMessages.length !== 0) {
@@ -440,42 +369,19 @@ $(function () {
       $typingMessages.remove();
     }
 
-    const $usernameDiv = $('<span class="username"/>')
-      .text(data.username)
-      .css("color", getUsernameColor(data.username));
-    const $messageBodyDiv = $('<span class="messageBody">').text(data.message);
-
-    const typingClass = data.typing ? "typing" : "";
-    const $messageDiv = $('<li class="chat__comment-list--my_message"/>')
+    const $user_name_content = $('<span class="username"/>').text(
+      data.username
+    );
+    const $message_body = $('<span class="messageBody">').text(data.message);
+    const $message_content = $('<li class="chat__comment-list--my_message"/>')
       .data("username", data.username)
-      .addClass(typingClass)
-      .append($usernameDiv, $messageBodyDiv);
+      .append($user_name_content, $message_body);
 
-    addMessageElement($messageDiv, options);
+    on_create_message_element($message_content, options);
   };
 
-  // Adds the visual chat typing message
-  const addChatTyping = (data) => {
-    data.typing = true;
-    data.message = "is typing";
-    addChatMessage(data);
-  };
-
-  // Removes the visual chat typing message
-  const removeChatTyping = (data) => {
-    getTypingMessages(data).fadeOut(function () {
-      $(this).remove();
-    });
-  };
-
-  // Adds a message element to the messages and scrolls to the bottom
-  // el - The element to add as a message
-  // options.fade - If the element should fade-in (default = true)
-  // options.prepend - If the element should prepend
-  //   all other messages (default = false)
-  const addMessageElement = (el, options) => {
-    const $el = $(el);
-    // Setup default options
+  const on_create_message_element = (el, options) => {
+    const $message_element = $(el);
     if (!options) {
       options = {};
     }
@@ -488,15 +394,15 @@ $(function () {
 
     // Apply options
     if (options.fade) {
-      $el.hide().fadeIn(FADE_TIME);
+      $message_element.hide().fadeIn(FADE_TIME);
     }
     if (options.prepend) {
-      $messages.prepend($el);
+      $message_list.prepend($message_element);
     } else {
-      $messages.append($el);
+      $message_list.append($message_element);
     }
 
-    $messages[0].scrollTop = $messages[0].scrollHeight;
+    $message_list[0].scrollTop = $message_list[0].scrollHeight;
   };
 
   // Prevents input from having injected markup
@@ -504,101 +410,51 @@ $(function () {
     return $("<div/>").text(input).html();
   };
 
-  // Updates the typing event
-  const updateTyping = () => {
-    if (connected) {
-      if (!typing) {
-        typing = true;
-      }
-      lastTypingTime = new Date().getTime();
-
-      setTimeout(() => {
-        const typingTimer = new Date().getTime();
-        const timeDiff = typingTimer - lastTypingTime;
-        if (timeDiff >= TYPING_TIMER_LENGTH && typing) {
-          typing = false;
-        }
-      }, TYPING_TIMER_LENGTH);
-    }
-  };
-
   // Gets the 'X is typing' messages of a user
   const getTypingMessages = (data) => {
-    return $(".typing.message").filter(function (i) {
+    return $(".typing.message").filter(function () {
       return $(this).data("username") === data.username;
     });
   };
+  //#endregion
 
-  // Gets the color of a username through our hash function
-  const getUsernameColor = (username) => {
-    // Compute hash code
-    let hash = 7;
-    for (let i = 0; i < username.length; i++) {
-      hash = username.charCodeAt(i) + (hash << 5) - hash;
-    }
-    // Calculate color
-  };
+  //#region Socket.ioのイベント
+  //ログイン時のフラグ変更
+  socket.on("login", () => {
+    connected = true;
+  });
 
-  // Keyboard events
+  //新規メッセージ取得後表示
+  socket.on("new message", (data) => {
+    on_create_message_data(data);
+  });
 
+  //映像をページに追加
+  socket.on("add movie", (data) => {
+    $streaming_element.html(data.movieurl);
+  });
+
+  //#endregion
+
+  //#region DOMのイベント
   $window.keydown((event) => {
-    // Auto-focus the current input when a key is typed
-
     // When the client hits ENTER on their keyboard
     if (event.which === 13) {
       if (username) {
-        sendMessage();
+        on_send_message();
         typing = false;
       } else {
-        setUsername();
+        on_set_user_data();
       }
     }
   });
-
-  $inputMessage.on("input", () => {
-    updateTyping();
-  });
-
-  // Click events
 
   // Focus input when clicking on the message input's border
   $inputMessage.click(() => {
     $inputMessage.focus();
   });
 
-  // Socket events
-
-  // Whenever the server emits 'login', log the login message
-  socket.on("login", (data) => {
-    connected = true;
-
-    addParticipantsMessage(data);
-  });
-
-  // Whenever the server emits 'new message', update the chat body
-  socket.on("new message", (data) => {
-    addChatMessage(data);
-  });
-
-  // Whenever the server emits 'user joined', log it in the chat body
-  socket.on("user joined", (data) => {
-    addParticipantsMessage(data);
-  });
-  socket.on("add movie", (data) => {
-    console.log(data);
-    $(".streaming").html(data.movieurl);
-  });
-  // Whenever the server emits 'user left', log it in the chat body
-  socket.on("user left", (data) => {
-    addParticipantsMessage(data);
-    removeChatTyping(data);
-  });
-  socket.on("login error", (data) => {
-    errorflg = data.errorflag;
-    current = data.current;
-  });
-  let darkflag = false;
-  $("#themechangeswitch").click(function () {
+  $theme_change_switch.click(function () {
     if (!darkflag) {
       $("#chat").addClass("darktheme");
       darkflag = true;
@@ -613,4 +469,11 @@ $(function () {
   $tab2.click(function () {
     $("#search").addClass("search_visible");
   });
+  $submit_button.on("click", function () {
+    on_send_message();
+  });
+  $login_button.on("click", function () {
+    on_set_user_data();
+  });
+  //#endregion
 });

@@ -16,18 +16,32 @@ app.use(express.static(path.join(__dirname, "public")));
 // Chatroom
 
 let numUsers = 0;
-let currentgroupcount = 0;
-let addurl = [];
-let grouparray = [];
-let passwordarray = [];
-passwordarray = ["0"];
-grouparray = ["0"];
-addurl = ["0"];
-let saveroomname = "";
+let current_group_count = 0;
 
+//#region 処理用変数
+//ルーム保存配列
+let room_data_list = [];
+//ルームデータ
+let room_data = {
+  room_name: "",
+  movie_url: "",
+  reader_name: "",
+};
+//#endregion
+
+//#region 共通部分
+//ルーム検索
+const on_room_search = (search_source_room_name) => {
+  for (var i = 1; i < grouparray.length; i++) {
+    if (grouparray[i] == search_source_room_name) {
+      return i;
+    }
+  }
+  return grouparray.length;
+};
+//#endregion
 io.on("connection", (socket) => {
   let addedUser = false;
-  io.to(socket.roomname).emit("chat message", "welcome!");
 
   // when the client emits 'new message', this listens and executes
   socket.on("new message", (data) => {
@@ -38,81 +52,45 @@ io.on("connection", (socket) => {
     });
   });
 
-  // when the client emits 'add user', this listens and executes
-  socket.on("add room", (username, roomname, url, roompass) => {
+  // when the client emits 'participant user', this listens and executes
+  socket.on("create room", (username, roomname, url, roompass) => {
     if (addedUser) return;
-    currentgroupcount++;
+    current_group_count++;
     // we store the username in the socket session for this client
     socket.username = username;
     socket.roomname = roomname;
     socket.movieurl = url;
-    passwordarray[currentgroupcount] = roompass;
-    addurl[currentgroupcount] = socket.movieurl;
-    grouparray[currentgroupcount] = socket.roomname;
-    ++numUsers;
-    addedUser = true;
-    console.log(socket.movieurl);
 
-    socket.emit("login", {
-      numUsers: numUsers,
-    });
+    room_data.room_name = roomname;
+    room_data.movie_url = url;
+    room_data.reader_name = username;
+
+    room_data_list[current_group_count] = room_data;
+    addedUser = true;
+
+    socket.emit("login");
 
     // echo globally (all clients) that a person has connected
 
     socket.join(socket.roomname);
   });
 
-  socket.on("add user", (username, roomname) => {
+  socket.on("participant user", (username, roomname) => {
     if (addedUser) return;
 
     // we store the username in the socket session for this client
     socket.username = username;
     socket.roomname = roomname;
     socket.movieurl = addurl;
-    var currentgroupnum = 0;
-    ++numUsers;
+
+    let belong_room_subscript = on_room_search(roomname);
     addedUser = true;
-    for (var i = 1; i < grouparray.length; i++) {
-      if (grouparray[i] == socket.roomname) {
-        currentgroupnum = i;
-        break;
-      }
-    }
-    socket.searchnum = currentgroupnum;
-    socket.emit("login", {
-      numUsers: numUsers,
-    });
+
+    socket.emit("login");
     socket.emit("add movie", {
-      movieurl: addurl[currentgroupnum],
+      movieurl: addurl[belong_room_subscript],
     });
     socket.join(socket.roomname);
-  });
-  socket.on("load movie", (username, roomname) => {
-    socket.username = username;
-    socket.roomname = roomname;
-    var nowurl = 0;
-    for (var i = 1; i < grouparray.length; i++) {
-      if (grouparray[i] == socket.roomname) {
-        nowurl = i;
-        break;
-      }
-    }
-    socket.emit("add movie", {
-      movieurl: addurl[nowurl],
-    });
-  });
-  // when the client emits 'typing', we broadcast it to others
-  socket.on("typing", () => {
-    socket.broadcast.emit("typing", {
-      username: socket.username,
-    });
-  });
-
-  // when the client emits 'stop typing', we broadcast it to others
-  socket.on("stop typing", () => {
-    socket.broadcast.emit("stop typing", {
-      username: socket.username,
-    });
   });
 
   // when the user disconnects.. perform this
