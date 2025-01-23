@@ -1,3 +1,4 @@
+import { SearchProcess } from "./search_system/search-process.js";
 $(function () {
   const FADE_TIME = 150; // ms
 
@@ -287,6 +288,7 @@ $(function () {
 
   //#endregion
   const socket = io();
+  const SEARCH_PROCESS = new SearchProcess();
 
   //#region 処理用変数
   //ユーザーデータ保持用
@@ -361,14 +363,25 @@ $(function () {
     if (message) {
       message = cleanInput(message);
       $inputMessage.val("");
-      let message_includes_ng_word_flag = on_ng_word_search(message);
-      if (!message_includes_ng_word_flag) {
-        let username = user_data.user_name;
-        on_create_message_data({ username, message });
-        // tell server to execute 'new message' and send along one parameter
-        socket.emit("new message", message);
+      if (message.includes("search")) {
+        let result_element = SEARCH_PROCESS.OnGetData(message);
+        on_create_message_data({
+          username,
+          message: "ヒントが表示されました。Monpediaのタグから閲覧できます。",
+        });
+        $(".search").append(result_element);
       } else {
-        alert("メッセージにNGワードが含まれています。入力しなおしてください。");
+        let message_includes_ng_word_flag = on_ng_word_search(message);
+        if (!message_includes_ng_word_flag) {
+          let username = user_data.user_name;
+          on_create_message_data({ username, message });
+          // tell server to execute 'new message' and send along one parameter
+          socket.emit("new message", message);
+        } else {
+          alert(
+            "メッセージにNGワードが含まれています。入力しなおしてください。"
+          );
+        }
       }
     } else {
       alert("メッセージが入力されていません。再度入力してください。");
