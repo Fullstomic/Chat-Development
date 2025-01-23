@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="theme-color" content="#757575" />
+    <title>Socket.IO Chat Example</title>
+    <link rel="stylesheet" href="./style.css" />
+    <meta name="viewport" content="width=device-width, intial-scale=1" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <script type="importmap">
+      {
+        "imports": {
+          "@material/web/": "https://esm.run/@material/web/"
+        }
+      }
+    </script>
+    <script type="module">
+      import "@material/web/all.js";
+      import { styles as typescaleStyles } from "@material/web/typography/md-typescale-styles.js";
+
+      document.adoptedStyleSheets.push(typescaleStyles.styleSheet);
+    </script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL@20..48,100..700,0..1"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL@20..48,100..700,0..1"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Sharp:opsz,wght,FILL@20..48,100..700,0..1"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <ul class="pages">
+      <li class="chat page" id="chat">
+        <header class="header">
+          <md-tabs class="header__tab-list" >
+            <md-primary-tab id="tab_1" class="header__tab-list--tab tab-active">
+              <md-icon>chat</md-icon>
+              チャット
+            </md-primary-tab>
+            <md-primary-tab id="tab2" class="header__tab-list--tab">
+              <md-icon>search</md-icon>
+              Monpedia
+            </md-primary-tab>
+          </md-tabs>
+          <div class="header__buttons">
+            <div class="header__theme-change">
+              <md-switch
+                class="header__theme-change--switch"
+                id="themechangeswitch"
+              ></md-switch>
+              <i class="header__theme-change--sentence">テーマ変更</i>
+            </div>
+          </div>
+        </header>
+        <main>
+          <section class="search" id="search">
+            <iframe src="http://searchSystemServerLB-452638627.us-east-1.elb.amazonaws.com/" frameborder="0"></iframe>
+          </section>
+          <section class="streaming"></section>
+          <section class="chatsection">
+            <h1 class="chat__headline">チャット</h1>
+            <div class="chat__form">
+              <md-filled-text-field
+                label="コメント"
+                class="chat__form--comment_form inputMessage"
+              ></md-filled-text-field>
+              <md-filled-icon-button
+                class="chat__form--submit_button"
+                id="submit"
+              >
+                <span>
+                  <md-icon class="submit-icon">send</md-icon>
+                </span>
+              </md-filled-icon-button>
+            </div>
+            <div class="chatArea">
+              <ul class="messages chat__comment-list"></ul>
+            </div>
+          </section>
+        </main>
+      </li>
+      <li class="login page">
+        <div class="form">
+          <div class="form-content">
+            <h3 class="title">ログイン</h3>
+            <div class="login-form__username-form">
+              <md-outlined-text-field
+                type="text"
+                name="username"
+                class="usernameInput"
+                id="username"
+                autocomplete="off"
+                label="ユーザー名"
+              ></md-outlined-text-field>
+            </div>
+            <div class="login-form__roomid-form">
+              <md-outlined-text-field
+                type="text"
+                name="rommname"
+                class="roomname"
+                id="roomid"
+                autocomplete="off"
+                label="ルームID"
+              ></md-outlined-text-field>
+            </div>
+            <div class="submit">
+              <md-filled-button
+                id="loginbtn"
+                class="loginbtn login-form__submit-button"
+              >
+                ログイン
+              </md-filled-button>
+            </div>
+          </div>
+        </div>
+      </li>
+    </ul>
+    <script
+      src="https://kit.fontawesome.com/d37cf25b9f.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="./socket.io/socket.io.js"></script>
+    <script src="./main.js"></script>
+  </body>
+</html>
