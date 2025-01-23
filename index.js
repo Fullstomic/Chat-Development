@@ -33,11 +33,11 @@ let room_data = {
 //ルーム検索
 const on_room_search = (search_source_room_name) => {
   for (var i = 1; i < room_data_list.length; i++) {
-    if (grouparray[i] == search_source_room_name) {
+    if (room_data_list[i].room_name == search_source_room_name) {
       return i;
     }
   }
-  return grouparray.length;
+  return room_data_list.length;
 };
 //#endregion
 io.on("connection", (socket) => {
