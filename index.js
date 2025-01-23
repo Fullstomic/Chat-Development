@@ -32,7 +32,7 @@ let room_data = {
 //#region 共通部分
 //ルーム検索
 const on_room_search = (search_source_room_name) => {
-  for (var i = 1; i < grouparray.length; i++) {
+  for (var i = 1; i < room_data_list.length; i++) {
     if (grouparray[i] == search_source_room_name) {
       return i;
     }
