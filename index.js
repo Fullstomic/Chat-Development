@@ -79,7 +79,6 @@ io.on("connection", (socket) => {
     // we store the username in the socket session for this client
     socket.username = username;
     socket.roomname = roomname;
-    socket.movieurl = addurl;
 
     let belong_room_subscript = on_room_search(roomname);
     addedUser = true;
