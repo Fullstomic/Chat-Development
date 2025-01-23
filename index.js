@@ -53,7 +53,7 @@ io.on("connection", (socket) => {
   });
 
   // when the client emits 'participant user', this listens and executes
-  socket.on("create room", (username, roomname, url, roompass) => {
+  socket.on("create room", (username, roomname, url) => {
     if (addedUser) return;
     current_group_count++;
     // we store the username in the socket session for this client
@@ -82,13 +82,13 @@ io.on("connection", (socket) => {
 
     let belong_room_subscript = on_room_search(roomname);
     addedUser = true;
-    if (room_data_list[belong_room_subscript] != null) {
-      socket.emit("add movie", {
-        movieurl: room_data[belong_room_subscript].movie_url,
-      });
-    }
 
     socket.join(socket.roomname);
+    if (room_data_list[belong_room_subscript] != null) {
+      socket.emit("add movie", {
+        movieurl: room_data_list[belong_room_subscript].movie_url,
+      });
+    }
   });
 
   // when the user disconnects.. perform this
