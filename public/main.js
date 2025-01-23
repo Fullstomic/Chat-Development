@@ -299,6 +299,9 @@ $(function () {
     user_name: "",
     room_name: "",
   };
+
+  //サーバー側の変数受け取り
+  let room_data_list;
   //#endregion
 
   //#region 共通部分
@@ -306,6 +309,16 @@ $(function () {
   const on_ng_word_search = (search_source_word) => {
     for (var i = 0; i < ngwords.length; i++) {
       if (search_source_word.includes(ngwords[i])) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  //ルーム存在チェック
+  const on_exist_room = (source_room_name) => {
+    for (var i = 0; i < room_data_list.length; i++) {
+      if (source_room_name == room_data_list[i].room_name) {
         return true;
       }
     }
@@ -320,13 +333,18 @@ $(function () {
     if (user_data.user_name && user_data.room_name) {
       let name_includes_ng_word_flag = on_ng_word_search(user_data.user_name);
       if (name_includes_ng_word_flag == false) {
-        let temp_name = user_data.user_name;
-        let temp_roomname = user_data.room_name;
-        socket.emit("participant user", temp_name, temp_roomname);
-        $login_page.fadeOut();
-        $chat_page.show();
-        $login_page.off("click");
-        $currentInput = $inputMessage.focus();
+        let room_exist_flag = on_exist_room(user_data.room_name);
+        if (room_exist_flag == true) {
+          let temp_name = user_data.user_name;
+          let temp_roomname = user_data.room_name;
+          socket.emit("participant user", temp_name, temp_roomname);
+          $login_page.fadeOut();
+          $chat_page.show();
+          $login_page.off("click");
+          $currentInput = $inputMessage.focus();
+        } else {
+          alert("ルームが存在しません。もう一度入力しなおしてください。");
+        }
       } else {
         alert(
           "ユーザー名にNGワードが含まれています。再度入力しなおしてください。"
@@ -427,6 +445,10 @@ $(function () {
     $streaming_element.html(data.movieurl);
   });
 
+  //ルームデータを受け取り
+  socket.on("send exist room list", (data) => {
+    room_data_list = data;
+  });
   //#endregion
 
   //#region DOMのイベント

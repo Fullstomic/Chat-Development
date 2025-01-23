@@ -39,8 +39,15 @@ const on_room_search = (search_source_room_name) => {
   }
   return room_data_list.length;
 };
+//削除時のデータずらし
+const on_room_data_change = (delete_room_subscript) => {
+  for (var i = delete_room_subscript; i < room_data_list.length; i++) {
+    room_data_list[i - 1] = room_data_list[i];
+  }
+};
 //#endregion
 io.on("connection", (socket) => {
+  socket.emit("send exist room list", room_data_list);
   let addedUser = false;
 
   // when the client emits 'new message', this listens and executes
@@ -88,6 +95,16 @@ io.on("connection", (socket) => {
       socket.emit("add movie", {
         movieurl: room_data_list[belong_room_subscript].movie_url,
       });
+    }
+  });
+  //ログアウト時の処理
+  socket.on("logout", () => {
+    let my_room_subscript = on_room_search(socket.roomname);
+    if (my_room_subscript < room_data_list.length) {
+      if (room_data_list[my_room_subscript].reader_name == socket.username) {
+        room_data_list[my_room_subscript] = null;
+        on_room_data_change(my_room_subscript);
+      }
     }
   });
 
