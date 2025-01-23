@@ -1,21 +1,7 @@
 $(function () {
   const FADE_TIME = 150; // ms
   const TYPING_TIMER_LENGTH = 400; // ms
-  document.querySelector("iframe").addEventListener("load", function () {});
-  const COLORS = [
-    "#e21400",
-    "#91580f",
-    "#f8a700",
-    "#f78b00",
-    "#58dc00",
-    "#287b00",
-    "#a8f07a",
-    "#4ae8c4",
-    "#3b88eb",
-    "#3824aa",
-    "#a700ff",
-    "#d300e7",
-  ];
+
   //NGワード
   const ngwords = [
     "事故",
@@ -272,42 +258,50 @@ $(function () {
     "主体思想",
     "╰⋃╯",
   ];
-  console.log(ngwords.length);
-  // Initialize variables
+
+  //#region エレメントの取得
   const $window = $(window);
-  const $usernameInput = $(".usernameInput"); // Input for username
-  const $messages = $(".messages"); // Messages area
-  const $inputMessage = $(".inputMessage"); // Input message input box
+
+  //入力フォームの取得
+  const $usernameInput = $(".usernameInput");
   const $inputroomname = $(".roomname");
-  const $loginPage = $(".login.page"); // The login page
-  const $chatPage = $(".chat.page"); // The chatroom page
+  const $inputMessage = $(".inputMessage");
+
+  //チャットリストの取得
+  const $messages = $(".messages");
+
+  //ページの取得
+  const $loginPage = $(".login.page");
+  const $chatPage = $(".chat.page");
+
+  //ボタンの取得
   const $loginbtn = $(".loginbtn");
+  const $submit_button = $("#submit");
+
+  //タブの取得
   const $tab1 = $("#tab_1");
   const $tab2 = $("#tab_2");
+
+  //#endregion
   const socket = io();
 
-  // Prompt for setting a username
+  //#region 処理用変数
+  //ユーザーデータ保持用
   let username;
   let roomname;
-  let roompassword;
+
+  //ユーザーデータ一時保存用
   let tempusername;
   let temproomname;
-  let temproompassword;
+
+  //各種フラグ
   let connected = false;
   let typing = false;
-  let lastTypingTime;
-  let $currentInput;
   let errorflg;
+  //#endregion
+
+  let lastTypingTime;
   let current;
-  const addParticipantsMessage = (data) => {
-    // let message = "";
-    // if (data.numUsers === 1) {
-    //   message += `現在1人接続中`;
-    // } else {
-    //   message += `現在、 ${data.numUsers} 人接続中`;
-    // }
-    // log(message);
-  };
   // Sets the client's username
   const setUsername = () => {
     username = cleanInput($usernameInput.val().trim());
@@ -382,7 +376,7 @@ $(function () {
     $(".streaming").html(data.movieurl);
   });
   // Sends a chat message
-  $("#submit").on("click", function () {
+  $submit_button.on("click", function () {
     let message = $inputMessage.val();
     // Prevent markup from being injected into the message
     message = cleanInput(message);
@@ -619,6 +613,4 @@ $(function () {
   $tab2.click(function () {
     $("#search").addClass("search_visible");
   });
-  let current_page_url = new URL(window.location.href);
-  $inputroomname.val(current_page_url.searchParams.get("roomid"));
 });

@@ -6,6 +6,10 @@ const server = require("http").createServer(app);
 const io = require("socket.io")(server);
 const port = process.env.PORT || 3000;
 
+server.listen(port, () => {
+  console.log("Server listening at port %d", port);
+});
+
 // Routing
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -15,8 +19,8 @@ let numUsers = 0;
 let currentgroupcount = 0;
 let addurl = [];
 let grouparray = [];
-let readerarray = [];
-readerarray = ["0"];
+let passwordarray = [];
+passwordarray = ["0"];
 grouparray = ["0"];
 addurl = ["0"];
 let saveroomname = "";
@@ -33,38 +37,21 @@ io.on("connection", (socket) => {
       message: data,
     });
   });
-  socket.on("find room", (data) => {
-    let current = 0;
-    for (var i = 1; i < grouparray.length; i++) {
-      if (grouparray[i] == data) {
-        current = i;
-        break;
-      }
-    }
-    if (current == 0) {
-      socket.emit("login error", {
-        errorflag: true,
-      });
-    } else {
-      socket.emit("login error", {
-        errorflag: false,
-        current: current,
-      });
-    }
-  });
+
   // when the client emits 'add user', this listens and executes
-  socket.on("add room", (username, roomname, url) => {
+  socket.on("add room", (username, roomname, url, roompass) => {
     if (addedUser) return;
     currentgroupcount++;
     // we store the username in the socket session for this client
     socket.username = username;
     socket.roomname = roomname;
     socket.movieurl = url;
-    readerarray[currentgroupcount] = roompass;
+    passwordarray[currentgroupcount] = roompass;
     addurl[currentgroupcount] = socket.movieurl;
     grouparray[currentgroupcount] = socket.roomname;
     ++numUsers;
     addedUser = true;
+    console.log(socket.movieurl);
 
     socket.emit("login", {
       numUsers: numUsers,
@@ -91,7 +78,6 @@ io.on("connection", (socket) => {
         break;
       }
     }
-
     socket.searchnum = currentgroupnum;
     socket.emit("login", {
       numUsers: numUsers,
@@ -101,7 +87,6 @@ io.on("connection", (socket) => {
     });
     socket.join(socket.roomname);
   });
-
   socket.on("load movie", (username, roomname) => {
     socket.username = username;
     socket.roomname = roomname;
@@ -140,23 +125,6 @@ io.on("connection", (socket) => {
         username: socket.username,
         numUsers: numUsers,
       });
-      let nowroom = 0;
-      for (var i = 1; i < grouparray.length; i++) {
-        if (grouparray[i] == socket.roomname) {
-          nowroom = i;
-          break;
-        }
-      }
-      if (socket.username == readerarray[nowroom]) {
-        grouparray[nowroom] = null;
-        addurl[nowroom] = null;
-        readerarray[nowroom] = null;
-        for (var j = nowroom + 1; j < grouparray.length; j++) {
-          grouparray[j - 1] = grouparray[j];
-          addurl[j - 1] = addurl[j];
-          readerarray[j - 1] = readerarray[j];
-        }
-      }
     }
   });
 });
