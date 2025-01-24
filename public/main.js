@@ -1,4 +1,4 @@
-import { SearchProcess } from "./search_system/search-process.js";
+import SearchProcess from "./search_system/search-process.js";
 $(function () {
   const FADE_TIME = 150; // ms
 
