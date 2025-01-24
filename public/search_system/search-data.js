@@ -58,5 +58,4 @@ export class SearchData {
     ["猫", "1回", "がっしゃーん"],
     ["遠吠え", "2回", "パリーン"],
   ];
-  on_get_monster_list() {}
 }

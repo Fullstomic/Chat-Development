@@ -32,7 +32,7 @@ let room_data = {
 //#region 共通部分
 //ルーム検索
 const on_room_search = (search_source_room_name) => {
-  for (var i = 1; i < room_data_list.length; i++) {
+  for (var i = 0; i < room_data_list.length; i++) {
     if (room_data_list[i].room_name == search_source_room_name) {
       return i;
     }
@@ -62,19 +62,19 @@ io.on("connection", (socket) => {
   // when the client emits 'participant user', this listens and executes
   socket.on("create room", (username, roomname, url) => {
     if (addedUser) return;
-    current_group_count++;
+
     // we store the username in the socket session for this client
     socket.username = username;
     socket.roomname = roomname;
     socket.movieurl = url;
 
     room_data.room_name = roomname;
-    room_data.movie_url = url;
+    room_data.movie_url = socket.movieurl;
     room_data.reader_name = username;
 
     room_data_list[current_group_count] = room_data;
     addedUser = true;
-
+    current_group_count++;
     // echo globally (all clients) that a person has connected
 
     socket.join(socket.roomname);
@@ -86,16 +86,14 @@ io.on("connection", (socket) => {
     // we store the username in the socket session for this client
     socket.username = username;
     socket.roomname = roomname;
-
     let belong_room_subscript = on_room_search(roomname);
     addedUser = true;
-
-    socket.join(socket.roomname);
     if (room_data_list[belong_room_subscript] != null) {
-      socket.emit("add movie", {
-        movieurl: room_data_list[belong_room_subscript].movie_url,
-      });
+      socket.emit("add movie", room_data_list[belong_room_subscript].movie_url);
+    } else {
+      socket.emit("debug", room_data_list[belong_room_subscript]);
     }
+    socket.join(socket.roomname);
   });
   //ログアウト時の処理
   socket.on("logout", () => {

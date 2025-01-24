@@ -1,4 +1,4 @@
-import SearchProcess from "./search_system/search-process.js";
+import { SearchProcess } from "./search_system/search-process.js";
 $(function () {
   const FADE_TIME = 150; // ms
 
@@ -343,7 +343,6 @@ $(function () {
           $login_page.fadeOut();
           $chat_page.show();
           $login_page.off("click");
-          $currentInput = $inputMessage.focus();
         } else {
           alert("ルームが存在しません。もう一度入力しなおしてください。");
         }
@@ -369,7 +368,10 @@ $(function () {
           username,
           message: "ヒントが表示されました。Monpediaのタグから閲覧できます。",
         });
-        $(".search").append(result_element);
+        $(".search")
+          .append(result_element.image_hint_1_element)
+          .append(result_element.image_hint_2_element)
+          .append(result_element.sound_text_hint_element);
       } else {
         let message_includes_ng_word_flag = on_ng_word_search(message);
         if (!message_includes_ng_word_flag) {
@@ -455,12 +457,15 @@ $(function () {
 
   //映像をページに追加
   socket.on("add movie", (data) => {
-    $streaming_element.html(data.movieurl);
+    $streaming_element.html(data);
   });
-
+  socket.on("debug", (data) => {
+    console.log(data);
+  });
   //ルームデータを受け取り
   socket.on("send exist room list", (data) => {
     room_data_list = data;
+    console.log(room_data_list[0].movie_url);
   });
   //#endregion
 
@@ -470,7 +475,6 @@ $(function () {
     if (event.which === 13) {
       if (username) {
         on_send_message();
-        typing = false;
       } else {
         on_set_user_data();
       }
