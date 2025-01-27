@@ -210,7 +210,47 @@ ul {
   }
 }
 /* Chat page */
-
+.login-error-popup {
+  background-color: #c7c7c76b;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+  visibility: hidden;
+  opacity: 0;
+  transition: all 0.2s;
+}
+.login-error-popup__content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50%;
+  height: 300px;
+  background-color: #fff;
+  position: relative;
+  border-radius: 5px;
+  box-shadow: 1px 1px 5px 1px #8d8d8d;
+}
+.login-error-popup__content--close_button {
+  display: flex;
+  width: fit-content;
+  height: 30px;
+  --md-sys-shape-corner-full: 5px;
+  margin: auto;
+}
+.login-error-popup__content--error-content {
+  width: 80%;
+  margin: 30px auto;
+}
+.visible {
+  opacity: 1;
+  visibility: visible;
+}
 .chat.page {
   max-height: 100vh;
   display: none;

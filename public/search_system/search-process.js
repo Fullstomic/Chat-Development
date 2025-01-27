@@ -14,17 +14,17 @@ export class SearchProcess {
     };
     let result_hint_list = {
       image_hint_1:
-        "<p>" +
-        search_data.hint_image_list[hint_subsciprt_list.hint_1][0] +
-        "</p>",
+        search_data.hint_image_list[hint_subsciprt_list.hint_1][
+          search_data_array[0]
+        ],
       image_hint_2:
-        "<p>" +
-        search_data.hint_image_list[hint_subsciprt_list.hint_2][0] +
-        "</p>",
+        search_data.hint_image_list[hint_subsciprt_list.hint_2][
+          search_data_array[1]
+        ],
       text_hint:
-        "<p>" +
-        search_data.hint_sound_text_list[hint_subsciprt_list.hint_3][0] +
-        "</p>",
+        search_data.hint_sound_text_list[hint_subsciprt_list.hint_3][
+          search_data_array[2]
+        ],
     };
     return this.OnDisplayResultData(result_hint_list);
   }

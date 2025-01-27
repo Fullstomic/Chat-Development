@@ -279,12 +279,17 @@ $(function () {
   //ボタンの取得
   const $login_button = $(".loginbtn");
   const $submit_button = $("#submit");
+  const $startf_over_button = $(".login-error-popup__content--close_button");
 
   //スイッチの取得
   const $theme_change_switch = $("#themechangeswitch");
   //タブの取得
   const $tab1 = $("#tab_1");
   const $tab2 = $("#tab_2");
+
+  //エラーウィンドウの取得
+  const $login_error_window = $(".login-error-popup");
+  const $error_sentence = $(".login-error-popup__content--error-content");
 
   //#endregion
   const socket = io();
@@ -344,15 +349,24 @@ $(function () {
           $chat_page.show();
           $login_page.off("click");
         } else {
-          alert("ルームが存在しません。もう一度入力しなおしてください。");
+          $login_error_window.addClass("visible");
+          $error_sentence.text(
+            "ルームが存在しません。もう一度入力しなおしてください。"
+          );
         }
       } else {
-        alert(
+        $login_error_window.addClass("visible");
+
+        $error_sentence.text(
           "ユーザー名にNGワードが含まれています。再度入力しなおしてください。"
         );
       }
     } else {
-      alert("ユーザー名かルーム名が入力されていません。再度入力してください。");
+      $login_error_window.addClass("visible");
+
+      $error_sentence.text(
+        "ユーザー名かルーム名が入力されていません。再度入力してください。"
+      );
     }
   };
 
@@ -371,7 +385,7 @@ $(function () {
         $(".search")
           .append(result_element.image_hint_1_element)
           .append(result_element.image_hint_2_element)
-          .append(result_element.sound_text_hint_element);
+          .append(result_element.sound_Text_hint_element);
       } else {
         let message_includes_ng_word_flag = on_ng_word_search(message);
         if (!message_includes_ng_word_flag) {
@@ -380,13 +394,19 @@ $(function () {
           // tell server to execute 'new message' and send along one parameter
           socket.emit("new message", message);
         } else {
-          alert(
+          $login_error_window.addClass("visible");
+
+          $error_sentence.text(
             "メッセージにNGワードが含まれています。入力しなおしてください。"
           );
         }
       }
     } else {
-      alert("メッセージが入力されていません。再度入力してください。");
+      $login_error_window.addClass("visible");
+
+      $error_sentence.text(
+        "メッセージが入力されていません。再度入力してください。"
+      );
     }
   };
 
@@ -399,10 +419,10 @@ $(function () {
       $typingMessages.remove();
     }
 
-    const $user_name_content = $('<span class="username"/>').text(
+    const $user_name_content = $('<span class="username"/>').Text(
       data.username
     );
-    const $message_body = $('<span class="messageBody">').text(data.message);
+    const $message_body = $('<span class="messageBody">').Text(data.message);
     const $message_content = $('<li class="chat__comment-list--my_message"/>')
       .data("username", data.username)
       .append($user_name_content, $message_body);
@@ -437,7 +457,7 @@ $(function () {
 
   // Prevents input from having injected markup
   const cleanInput = (input) => {
-    return $("<div/>").text(input).html();
+    return $("<div/>").text(input).text();
   };
 
   // Gets the 'X is typing' messages of a user
@@ -457,7 +477,7 @@ $(function () {
 
   //映像をページに追加
   socket.on("add movie", (data) => {
-    $streaming_element.html(data);
+    $streaming_element.Text(data);
   });
   socket.on("debug", (data) => {
     console.log(data);
@@ -465,7 +485,6 @@ $(function () {
   //ルームデータを受け取り
   socket.on("send exist room list", (data) => {
     room_data_list = data;
-    console.log(room_data_list[0].movie_url);
   });
   //#endregion
 
@@ -506,6 +525,9 @@ $(function () {
   });
   $login_button.on("click", function () {
     on_set_user_data();
+  });
+  $startf_over_button.on("click", function () {
+    $login_error_window.removeClass("visible");
   });
   //#endregion
 });
