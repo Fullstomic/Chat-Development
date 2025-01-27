@@ -49,9 +49,19 @@ export const monster_list = [
   },
 ];
 
-export const hint_image_list = [
-  ["右手形", "2本", "包帯無し", "父頭無し", "枯れた花"],
-  ["左手形", "二本曲線", "消毒なし", "母頭無し", "割れた花瓶"],
+export const hint_image_list_1 = [
+  "右手形",
+  "2本",
+  "包帯無し",
+  "父頭無し",
+  "枯れた花",
+];
+export const hint_image_list_2 = [
+  "左手形",
+  "二本曲線",
+  "消毒なし",
+  "母頭無し",
+  "割れた花瓶",
 ];
 export const hint_sound_text_list = [
   ["猫", "1回", "がっしゃーん"],

@@ -75,7 +75,6 @@ io.on("connection", (socket) => {
     room_data.monster_id = monsterid;
     room_data_list[current_group_count] = room_data;
     addedUser = true;
-    monster_id = monsterid;
     current_group_count++;
     // echo globally (all clients) that a person has connected
 
@@ -91,14 +90,15 @@ io.on("connection", (socket) => {
     let belong_room_subscript = on_room_search(roomname);
     addedUser = true;
     if (room_data_list[belong_room_subscript] != null) {
-      socket.emit("add movie", room_data_list[belong_room_subscript].movie_url);
+      socket.emit(
+        "add movie",
+        room_data_list[belong_room_subscript].movie_url,
+        room_data_list[belong_room_subscript].monster_id
+      );
     } else {
-      socket.emit("debug", room_data_list[belong_room_subscript]);
+      socket.emit("debug", room_data_list[belong_room_subscript].monster_id);
     }
-    socket.emit(
-      "to supporter monster id",
-      room_data_list[belong_room_subscript].monster_id
-    );
+
     socket.join(socket.roomname);
   });
   //ログアウト時の処理

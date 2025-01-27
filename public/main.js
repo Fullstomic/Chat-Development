@@ -330,6 +330,7 @@ $(function () {
   const on_exist_room = (source_room_name) => {
     for (var i = 0; i < room_data_list.length; i++) {
       if (source_room_name == room_data_list[i].room_name) {
+        console.log(room_data_list[i].monster_id);
         return true;
       }
     }
@@ -481,8 +482,9 @@ $(function () {
   });
 
   //映像をページに追加
-  socket.on("add movie", (data) => {
-    $streaming_element.html(data);
+  socket.on("add movie", (movieurl, monsterid) => {
+    $streaming_element.html(movieurl);
+    monster_id = monsterid;
   });
   socket.on("debug", (data) => {
     console.log(data);
@@ -490,9 +492,9 @@ $(function () {
   //ルームデータを受け取り
   socket.on("send exist room list", (data) => {
     room_data_list = data;
+    console.log(room_data_list[0].monster_id);
   });
   socket.on("to supporter monster id", (data) => {
-    console.log(data);
     monster_id = data;
   });
   //#endregion
