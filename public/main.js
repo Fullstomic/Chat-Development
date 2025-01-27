@@ -1,4 +1,6 @@
 import { SearchProcess } from "./search_system/search-process.js";
+
+export let resource;
 $(function () {
   const FADE_TIME = 150; // ms
 
@@ -309,6 +311,8 @@ $(function () {
 
   //サーバー側の変数受け取り
   let room_data_list;
+  let monster_id;
+
   //#endregion
 
   //#region 共通部分
@@ -377,7 +381,8 @@ $(function () {
       message = cleanInput(message);
       $inputMessage.val("");
       if (message.includes("search")) {
-        let result_element = SEARCH_PROCESS.OnGetData(message);
+        resource = message;
+        let result_element = SEARCH_PROCESS.OnGetData(resource, monster_id);
         on_create_message_data({
           username,
           message: "ヒントが表示されました。Monpediaのタグから閲覧できます。",
@@ -385,7 +390,7 @@ $(function () {
         $(".search")
           .append(result_element.image_hint_1_element)
           .append(result_element.image_hint_2_element)
-          .append(result_element.sound_Text_hint_element);
+          .append(result_element.sound_text_hint_element);
       } else {
         let message_includes_ng_word_flag = on_ng_word_search(message);
         if (!message_includes_ng_word_flag) {
@@ -419,10 +424,10 @@ $(function () {
       $typingMessages.remove();
     }
 
-    const $user_name_content = $('<span class="username"/>').Text(
+    const $user_name_content = $('<span class="username"/>').text(
       data.username
     );
-    const $message_body = $('<span class="messageBody">').Text(data.message);
+    const $message_body = $('<span class="messageBody">').text(data.message);
     const $message_content = $('<li class="chat__comment-list--my_message"/>')
       .data("username", data.username)
       .append($user_name_content, $message_body);
@@ -477,7 +482,7 @@ $(function () {
 
   //映像をページに追加
   socket.on("add movie", (data) => {
-    $streaming_element.Text(data);
+    $streaming_element.html(data);
   });
   socket.on("debug", (data) => {
     console.log(data);
@@ -485,6 +490,10 @@ $(function () {
   //ルームデータを受け取り
   socket.on("send exist room list", (data) => {
     room_data_list = data;
+  });
+  socket.on("to supporter monster id", (data) => {
+    console.log(data);
+    monster_id = data;
   });
   //#endregion
 

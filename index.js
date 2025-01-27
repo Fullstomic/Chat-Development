@@ -17,7 +17,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 let numUsers = 0;
 let current_group_count = 0;
-
+let monster_id = 0;
 //#region 処理用変数
 //ルーム保存配列
 let room_data_list = [];
@@ -26,6 +26,7 @@ let room_data = {
   room_name: "",
   movie_url: "",
   reader_name: "",
+  monster_id: "",
 };
 //#endregion
 
@@ -60,7 +61,7 @@ io.on("connection", (socket) => {
   });
 
   // when the client emits 'participant user', this listens and executes
-  socket.on("create room", (username, roomname, url) => {
+  socket.on("create room", (username, roomname, url, monsterid) => {
     if (addedUser) return;
 
     // we store the username in the socket session for this client
@@ -71,9 +72,10 @@ io.on("connection", (socket) => {
     room_data.room_name = roomname;
     room_data.movie_url = socket.movieurl;
     room_data.reader_name = username;
-
+    room_data.monster_id = monsterid;
     room_data_list[current_group_count] = room_data;
     addedUser = true;
+    monster_id = monsterid;
     current_group_count++;
     // echo globally (all clients) that a person has connected
 
@@ -93,6 +95,10 @@ io.on("connection", (socket) => {
     } else {
       socket.emit("debug", room_data_list[belong_room_subscript]);
     }
+    socket.emit(
+      "to supporter monster id",
+      room_data_list[belong_room_subscript].monster_id
+    );
     socket.join(socket.roomname);
   });
   //ログアウト時の処理
