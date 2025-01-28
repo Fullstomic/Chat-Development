@@ -53,9 +53,9 @@ export class SearchProcess {
   }
   OnDisplayResultData(result_data) {
     let element_coversion = {
-      image_hint_1_element: $(result_data.image_hint_1).html(),
-      image_hint_2_element: $(result_data.image_hint_2).html(),
-      sound_text_hint_element: $(result_data.text_hint).html(),
+      image_hint_1_element: $(result_data.image_hint_1),
+      image_hint_2_element: $(result_data.image_hint_2),
+      sound_text_hint_element: $(result_data.text_hint),
     };
     return element_coversion;
   }

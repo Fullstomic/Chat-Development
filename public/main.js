@@ -294,9 +294,10 @@ $(function () {
   const $error_sentence = $(".login-error-popup__content--error-content");
 
   //#endregion
+  //#region モジュールの取得
   const socket = io();
   const SEARCH_PROCESS = new SearchProcess();
-
+  //#endregion
   //#region 処理用変数
   //ユーザーデータ保持用
 
@@ -388,6 +389,8 @@ $(function () {
           username,
           message: "ヒントが表示されました。Monpediaのタグから閲覧できます。",
         });
+        console.log(result_element.image_hint_1_element);
+        $(".search").empty();
         $(".search")
           .append(result_element.image_hint_1_element)
           .append(result_element.image_hint_2_element)
@@ -476,6 +479,10 @@ $(function () {
 
   //#region Socket.ioのイベント
 
+  //パラメーターからルームIDを入力
+  let url = new URL(window.location.href);
+  let params = url.searchParams;
+  $inputroomname.val(params.get("roomid"));
   //新規メッセージ取得後表示
   socket.on("new message", (data) => {
     on_create_message_data(data);
