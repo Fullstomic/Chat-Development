@@ -62,30 +62,38 @@
         </header>
         <main>
           <section class="search" id="search">
+            <div class="hint-window">
+              <button onclick="hint_window_close()">
+                <md-icon>close</md-icon>
+              </button>
+              <h1 class="monster-name"></h1>
+              <p class="overline"></p>
+              <div class="hint-display"></div>
+            </div>
             <ul>
               <li>
-                <button>てけてけ</button>
+                <button onclick="OnHintDisplay(0);">てけてけ</button>
               </li>
               <li>
-                <button>水子</button>
+                <button onclick="OnHintDisplay(1);">水子</button>
               </li>
               <li>
-                <button>気が荒い付喪神</button>
+                <button onclick="OnHintDisplay(2);">気が荒い付喪神</button>
               </li>
               <li>
-                <button>いじめられっ子</button>
+                <button onclick="OnHintDisplay(3);">いじめられっ子</button>
               </li>
               <li>
-                <button>金次郎</button>
+                <button onclick="OnHintDisplay(4);">金次郎</button>
               </li>
               <li>
-                <button>病気のお母さん</button>
+                <button onclick="OnHintDisplay(0);">病気のお母さん</button>
               </li>
               <li>
-                <button>グリモア</button>
+                <button onclick="OnHintDisplay(5);">グリモア</button>
               </li>
               <li>
-                <button>いたずらっ子</button>
+                <button onclick="OnHintDisplay(6);">いたずらっ子</button>
               </li>
             </ul>
           </section>

@@ -1,5 +1,5 @@
 import { SearchProcess } from "./search_system/search-process.js";
-
+import { monster_list } from "./search_system/search-data.js";
 export let resource;
 $(function () {
   const FADE_TIME = 150; // ms
@@ -532,3 +532,6 @@ $(function () {
   });
   //#endregion
 });
+function OnHintDisplay(monster_id) {
+  let result_list = SEARCH_PROCESS.OnGetData();
+}

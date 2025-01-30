@@ -6,16 +6,14 @@ import {
 } from "./search-data.js";
 import { resource } from "./../main.js";
 export class SearchProcess {
-  OnGetData(search_data, hint_id_list) {
-    for (var i = 0; i < search_data_array.length; i++) {
+  OnGetData(monster_id, hint_id_list) {
+    for (var i = 0; i < hint_id_list.length; i++) {
       parseInt(hint_id_list[i], 10);
     }
-    return this.OnSearchProcess(search_data_array, id);
+    return this.OnSearchProcess(monster_id, hint_id_list);
   }
-  OnSearchProcess(array, monster_id) {
-    console.log(monster_id);
+  OnSearchProcess(monster_id, hint_id_list) {
     let id = monster_id;
-    console.log(id / 4);
     let row_1 = id / 4;
     let row_2 = (id / 2) % 2;
     let row_3 = id % 2;
@@ -43,9 +41,9 @@ export class SearchProcess {
     }
     row_result_list.row_3 = hint_sound_text_list[hint_subsciprt_list[2]];
     let result_hint_list = {
-      image_hint_1: "<p>" + row_result_list.row_1[array[1]] + "</p>",
-      image_hint_2: "<p>" + row_result_list.row_2[array[2]] + "</p>",
-      text_hint: "<p>" + row_result_list.row_3[array[3]] + "</p>",
+      image_hint_1: "<p>" + row_result_list.row_1[hint_id_list[0]] + "</p>",
+      image_hint_2: "<p>" + row_result_list.row_2[hint_id_list[1]] + "</p>",
+      text_hint: "<p>" + row_result_list.row_3[hint_id_list[2]] + "</p>",
     };
     return this.OnDisplayResultData(result_hint_list);
   }
