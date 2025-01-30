@@ -312,7 +312,7 @@ $(function () {
 
   //サーバー側の変数受け取り
   let room_data_list;
-  let monster_id;
+  let hint_id_list = [];
 
   //#endregion
 
@@ -331,7 +331,6 @@ $(function () {
   const on_exist_room = (source_room_name) => {
     for (var i = 0; i < room_data_list.length; i++) {
       if (source_room_name == room_data_list[i].room_name) {
-        console.log(room_data_list[i].monster_id);
         return true;
       }
     }
@@ -384,7 +383,7 @@ $(function () {
       $inputMessage.val("");
       if (message.includes("search")) {
         resource = message;
-        let result_element = SEARCH_PROCESS.OnGetData(resource, monster_id);
+        let result_element = SEARCH_PROCESS.OnGetData(resource, hint_id_list);
         on_create_message_data({
           username,
           message: "ヒントが表示されました。Monpediaのタグから閲覧できます。",
@@ -491,7 +490,6 @@ $(function () {
   //映像をページに追加
   socket.on("add movie", (movieurl, monsterid) => {
     $streaming_element.html(movieurl);
-    monster_id = monsterid;
   });
   socket.on("debug", (data) => {
     console.log(data);
@@ -499,10 +497,9 @@ $(function () {
   //ルームデータを受け取り
   socket.on("send exist room list", (data) => {
     room_data_list = data;
-    console.log(room_data_list[0].monster_id);
   });
-  socket.on("to supporter monster id", (data) => {
-    monster_id = data;
+  socket.on("change hint", (data) => {
+    hint_id_list = data.split(",");
   });
   //#endregion
 

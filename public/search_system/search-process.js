@@ -6,11 +6,9 @@ import {
 } from "./search-data.js";
 import { resource } from "./../main.js";
 export class SearchProcess {
-  OnGetData(search_data, id) {
-    let search_data_array = search_data.split(",");
-    search_data_array[0] = "0";
+  OnGetData(search_data, hint_id_list) {
     for (var i = 0; i < search_data_array.length; i++) {
-      parseInt(search_data_array[i], 10);
+      parseInt(hint_id_list[i], 10);
     }
     return this.OnSearchProcess(search_data_array, id);
   }

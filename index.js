@@ -17,7 +17,6 @@ app.use(express.static(path.join(__dirname, "public")));
 
 let numUsers = 0;
 let current_group_count = 0;
-let monster_id = 0;
 //#region 処理用変数
 //ルーム保存配列
 let room_data_list = [];
@@ -26,7 +25,7 @@ let room_data = {
   room_name: "",
   movie_url: "",
   reader_name: "",
-  monster_id: "",
+  hint_id: "",
 };
 //#endregion
 
@@ -61,7 +60,7 @@ io.on("connection", (socket) => {
   });
 
   // when the client emits 'participant user', this listens and executes
-  socket.on("create room", (username, roomname, url, monsterid) => {
+  socket.on("create room", (username, roomname, url) => {
     if (addedUser) return;
 
     // we store the username in the socket session for this client
@@ -72,7 +71,6 @@ io.on("connection", (socket) => {
     room_data.room_name = roomname;
     room_data.movie_url = socket.movieurl;
     room_data.reader_name = username;
-    room_data.monster_id = monsterid;
     room_data_list[current_group_count] = room_data;
     addedUser = true;
     current_group_count++;
@@ -93,13 +91,16 @@ io.on("connection", (socket) => {
       socket.emit(
         "add movie",
         room_data_list[belong_room_subscript].movie_url,
-        room_data_list[belong_room_subscript].monster_id
+        room_data_list[belong_room_subscript].hint_id
       );
     } else {
-      socket.emit("debug", room_data_list[belong_room_subscript].monster_id);
+      socket.emit("debug", room_data_list[belong_room_subscript].hint_id);
     }
 
     socket.join(socket.roomname);
+  });
+  socket.on("change hint", (data) => {
+    socket.emit("change hint", data);
   });
   //ログアウト時の処理
   socket.on("logout", () => {
