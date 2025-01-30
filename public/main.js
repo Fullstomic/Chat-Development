@@ -381,33 +381,19 @@ $(function () {
     if (message) {
       message = cleanInput(message);
       $inputMessage.val("");
-      if (message.includes("search")) {
-        resource = message;
-        let result_element = SEARCH_PROCESS.OnGetData(resource, hint_id_list);
-        on_create_message_data({
-          username,
-          message: "ヒントが表示されました。Monpediaのタグから閲覧できます。",
-        });
-        console.log(result_element.image_hint_1_element);
-        $(".search").empty();
-        $(".search")
-          .append(result_element.image_hint_1_element)
-          .append(result_element.image_hint_2_element)
-          .append(result_element.sound_text_hint_element);
-      } else {
-        let message_includes_ng_word_flag = on_ng_word_search(message);
-        if (!message_includes_ng_word_flag) {
-          let username = user_data.user_name;
-          on_create_message_data({ username, message });
-          // tell server to execute 'new message' and send along one parameter
-          socket.emit("new message", message);
-        } else {
-          $login_error_window.addClass("visible");
 
-          $error_sentence.text(
-            "メッセージにNGワードが含まれています。入力しなおしてください。"
-          );
-        }
+      let message_includes_ng_word_flag = on_ng_word_search(message);
+      if (!message_includes_ng_word_flag) {
+        let username = user_data.user_name;
+        on_create_message_data({ username, message });
+        // tell server to execute 'new message' and send along one parameter
+        socket.emit("new message", message);
+      } else {
+        $login_error_window.addClass("visible");
+
+        $error_sentence.text(
+          "メッセージにNGワードが含まれています。入力しなおしてください。"
+        );
       }
     } else {
       $login_error_window.addClass("visible");
