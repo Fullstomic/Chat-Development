@@ -268,6 +268,8 @@ $(function () {
   const $usernameInput = $(".usernameInput");
   const $inputroomname = $(".roomname");
   const $inputMessage = $(".inputMessage");
+  const $create_roomid = $("#createroomid");
+  const $create_username = $("#createusername");
 
   //チャットリストの取得
   const $message_list = $(".messages");
@@ -277,10 +279,12 @@ $(function () {
   //ページの取得
   const $login_page = $(".login.page");
   const $chat_page = $(".chat.page");
+  const $create_page = $(".createRoom.page");
 
   //ボタンの取得
   const $login_button = $(".loginbtn");
   const $submit_button = $("#submit");
+  const $create_button = $("#createbtn");
   const $startf_over_button = $(".login-error-popup__content--close_button");
 
   //スイッチの取得
@@ -459,6 +463,16 @@ $(function () {
     return $(".typing.message").filter(function () {
       return $(this).data("username") === data.username;
     });
+  };
+
+  //ルーム作成
+  const send_room_data = (username, roomid) => {
+    room_exist_flag = on_exist_room(room_data_list);
+    if (!room_exist_flag) {
+      socket.on("create room", username, roomid, null);
+    } else {
+      alert("同じルームが存在します。 再度入力しなおしてください。");
+    }
   };
   //#endregion
 

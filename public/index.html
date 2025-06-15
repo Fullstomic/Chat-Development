@@ -163,9 +163,54 @@
               >
                 ログイン
               </md-filled-button>
+              <md-outlined-button>ルームを作成する</md-outlined-button>
             </div>
           </div>
         </div>
+      </li>
+      <li class="createRoom page login" style="z-index: 99999;">
+        <div class="login-error-popup">
+          <div class="login-error-popup__content">
+            <div>
+              <p class="login-error-popup__content--error-content"></p>
+              <md-filled-button
+                class="login-error-popup__content--close_button"
+              >
+                やり直す
+              </md-filled-button>
+            </div>
+          </div>
+        </div>
+        <div class="form">
+          <div class="form-content">
+            <h3 class="title">ルーム作成</h3>
+            <div class="login-form__username-form">
+              <md-outlined-text-field
+                type="text"
+                name="username"
+                class="usernameInput"
+                id="createusername"
+                autocomplete="off"
+                label="管理ユーザー名"
+              ></md-outlined-text-field>
+            </div>
+            <div class="login-form__roomid-form">
+              <md-outlined-text-field
+                type="text"
+                name="rommname"
+                class="roomname"
+                id="createroomid"
+                autocomplete="off"
+                label="ルームID"
+              ></md-outlined-text-field>
+            </div>
+            <div class="submit">
+              <md-filled-button
+                id="createbtn"
+                class="loginbtn login-form__submit-button"
+              >
+                ログイン
+              </md-filled-button>
       </li>
     </ul>
     <script
